@@ -20,29 +20,27 @@ package t3.examples.restservices;
 
 import org.exoplatform.services.rest.resource.ResourceContainer;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
 @Path("HelloWorldRest")
 public class HelloWorldRest implements ResourceContainer
 {
    @GET
+   @Path("/hello")
+   public Response infos()
+   {
+      String response = "Hello World!";
+      return Response.ok(response).build();
+   }
+
+   @GET
    @Path("/hello/{user}/")
    public Response helloUser(@PathParam("user") String user)
    {
       String response = "Hello " + user + "!";
-      return Response.ok(response).build();
-   }
-   
-   @GET
-   @Path("/hello")
-   public Response infos(@Context HttpServletRequest request)
-   {
-      String response = "Hello World!";
       return Response.ok(response).build();
    }
 }
