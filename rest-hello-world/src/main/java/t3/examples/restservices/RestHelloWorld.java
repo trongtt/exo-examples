@@ -25,8 +25,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
-@Path("HelloWorldRest")
-public class HelloWorldRest implements ResourceContainer
+@Path("RestHelloWorld")
+public class RestHelloWorld implements ResourceContainer
 {
    @GET
    @Path("/hello")
