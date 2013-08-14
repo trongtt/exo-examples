@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.gatein.portal.examples.portlets</groupId>
+	<version>3.5.0.Beta02-SNAPSHOT</version>
+
+	<artifactId>todomvc</artifactId>
+	<packaging>war</packaging>
+	<name>GateIn Portal Examples - Todo MVC Portlet</name>
+
+	<build>
+		<finalName>todomvc</finalName>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>javax.portlet</groupId>
+			<artifactId>portlet-api</artifactId>
+			<version>2.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.exoplatform.example</groupId>
+			<artifactId>todomvc-core</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>1.5</version>
+		</dependency>
+	</dependencies>
+</project>
