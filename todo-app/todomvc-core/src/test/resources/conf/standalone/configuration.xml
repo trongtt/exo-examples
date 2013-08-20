@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd http://www.exoplatform.org/xml/ns/kernel_1_2.xsd"
+    xmlns="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd">
+
+  <component>
+    <key>org.gatein.portlet.todomvc.service.impl.jcr.JCRSessionProvider</key>
+    <type>org.gatein.portlet.todomvc.service.testimpl.StandaloneJCRSessionProvider</type>
+  </component>
+  <component>
+    <type>org.gatein.portlet.todomvc.service.impl.jcr.JCRHelper</type>
+  </component>
+
+  <component>
+    <key>org.gatein.portlet.todomvc.service.TodoService</key>
+    <type>org.gatein.portlet.todomvc.service.impl.TodoServiceJCRImpl</type>
+  </component>
+
+
+  <component>
+    <key>org.exoplatform.services.jcr.RepositoryService</key>
+    <type>org.exoplatform.services.jcr.impl.RepositoryServiceImpl</type>
+  </component>
+  <component>
+    <key>org.exoplatform.services.jcr.config.RepositoryServiceConfiguration</key>
+    <type>org.exoplatform.services.jcr.impl.config.RepositoryServiceConfigurationImpl</type>
+    <init-params>
+      <value-param>
+        <name>conf-path</name>
+        <description>JCR repositories configuration file</description>
+        <value>jar:/conf/standalone/jcr-configuration.xml</value>
+      </value-param>
+    </init-params>
+  </component>
+
+  <component>
+    <key>org.exoplatform.services.jcr.config.SystemParametersPersistenceConfigurator</key>
+    <type>org.exoplatform.services.jcr.config.SystemParametersPersistenceConfigurator</type>
+    <init-params>
+      <value-param>
+        <name>file-path</name>
+        <value>target/temp</value>
+      </value-param>
+      <values-param>
+        <name>unmodifiable</name>
+        <value>cache.test-parameter-I</value>
+      </values-param>
+      <values-param>
+        <name>before-initialize</name>
+        <value>value-storage.enabled</value>
+        <value>cache.test-parameter-II</value>
+      </values-param>
+    </init-params>
+  </component>
+
+  <external-component-plugins>
+    <target-component>org.exoplatform.services.naming.InitialContextInitializer</target-component>
+    <component-plugin>
+      <name>bind.datasource</name>
+      <set-method>addPlugin</set-method>
+      <type>org.exoplatform.services.naming.BindReferencePlugin</type>
+      <init-params>
+        <value-param>
+          <name>bind-name</name>
+          <value>jdbcjcr</value>
+        </value-param>
+        <value-param>
+          <name>class-name</name>
+          <value>javax.sql.DataSource</value>
+        </value-param>
+        <value-param>
+          <name>factory</name>
+          <value>org.apache.commons.dbcp.BasicDataSourceFactory</value>
+        </value-param>
+        <properties-param>
+          <name>ref-addresses</name>
+          <description>ref-addresses</description>
+          <property name="driverClassName" value="${all.driverClassName:org.hsqldb.jdbcDriver}"/>
+          <!-- MVCC configured to prevent possible deadlocks when a global Tx is active -->
+          <property name="url" value="${jdbcjcr.url:jdbc:hsqldb:file:target/temp/data/portal;hsqldb.tx=mvcc}"/>
+          <property name="username" value="${jdbcjcr.username:sa}"/>
+          <property name="password" value="${jdbcjcr.password:}"/>
+          <property name="maxActive" value="20" />
+        </properties-param>
+      </init-params>
+    </component-plugin>
+
+    <component-plugin>
+      <name>bind.jcr</name>
+      <set-method>addPlugin</set-method>
+      <type>org.exoplatform.services.naming.BindReferencePlugin</type>
+      <init-params>
+        <value-param>
+          <name>bind-name</name>
+          <value>repo</value>
+        </value-param>
+        <value-param>
+          <name>class-name</name>
+          <value>javax.jcr.Repository</value>
+        </value-param>
+        <value-param>
+          <name>factory</name>
+          <value>org.exoplatform.services.jcr.impl.jndi.BindableRepositoryFactory</value>
+        </value-param>
+        <properties-param>
+          <name>ref-addresses</name>
+          <description>ref-addresses</description>
+          <property name="repositoryName" value="db1"/>
+          <!-- property name="containerConfig" value="exo-configuration.xml"/ -->
+        </properties-param>
+      </init-params>
+    </component-plugin>
+    <component-plugin>
+      <name>rmi.jcr</name>
+      <set-method>addPlugin</set-method>
+      <type>org.exoplatform.services.naming.BindReferencePlugin</type>
+      <init-params>
+        <value-param>
+          <name>bind-name</name>
+          <value>rmirepository</value>
+        </value-param>
+        <value-param>
+          <name>class-name</name>
+          <value>javax.jcr.Repository</value>
+        </value-param>
+        <value-param>
+          <name>factory</name>
+          <value>org.exoplatform.services.jcr.rmi.RepositoryFactory</value>
+        </value-param>
+        <properties-param>
+          <name>ref-addresses</name>
+          <description>ref-addresses</description>
+          <property name="url" value="//localhost:9999/repository"/>
+        </properties-param>
+      </init-params>
+    </component-plugin>
+  </external-component-plugins>
+</configuration>
