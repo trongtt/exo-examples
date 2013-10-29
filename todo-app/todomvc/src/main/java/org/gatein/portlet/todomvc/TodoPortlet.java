@@ -18,8 +18,12 @@
  */
 package org.gatein.portlet.todomvc;
 
+import org.exoplatform.container.ExoContainer;
+import org.exoplatform.container.ExoContainerContext;
+import org.exoplatform.container.PortalContainer;
 import org.gatein.portlet.todomvc.service.TodoService;
 import org.gatein.portlet.todomvc.service.impl.TodoServiceImpl;
+import org.gatein.portlet.todomvc.service.impl.TodoServiceJCRImpl;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -28,6 +32,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import javax.portlet.GenericPortlet;
+import javax.portlet.PortletConfig;
 import javax.portlet.PortletException;
 import javax.portlet.PortletRequestDispatcher;
 import javax.portlet.RenderRequest;
@@ -49,7 +54,9 @@ public class TodoPortlet extends GenericPortlet
    public void init() throws PortletException
    {
       super.init();
-      todoService = new TodoServiceImpl();
+
+       PortalContainer container = PortalContainer.getInstance();
+       this.todoService = (TodoService)container.getComponentInstanceOfType(TodoService.class);
    }
 
    @Override
@@ -107,7 +114,8 @@ public class TodoPortlet extends GenericPortlet
          }
          catch (Exception e)
          {
-            throw new PortletException();
+             e.printStackTrace();
+            throw new PortletException(e);
          }
       }
    }

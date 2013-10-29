@@ -10,12 +10,8 @@
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd http://www.exoplatform.org/xml/ns/kernel_1_2.xsd"
 	xmlns="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd">
-	<!--<component>
-		<key>org.gatein.portlet.todomvc.service.TodoService</key>
-		<type>org.gatein.portlet.todomvc.service.impl.TodoServiceImpl</type>
-	</component>-->
 
-  <!--<component>
+  <component>
     <key>org.gatein.portlet.todomvc.service.impl.jcr.JCRSessionProvider</key>
     <type>org.gatein.portlet.todomvc.service.impl.jcr.PortalJCRSessionProvider</type>
   </component>
@@ -24,34 +20,8 @@
   </component>
 
   <component>
-    <key>org.gatein.portlet.todomvc.service.TodoService</key>
-    <type>org.gatein.portlet.todomvc.service.impl.TodoServiceJCRImpl</type>
-  </component>-->
+  <key>org.gatein.portlet.todomvc.service.TodoService</key>
+  <type>org.gatein.portlet.todomvc.service.impl.TodoServiceJCRImpl</type>
+  </component>
 
-  <external-component-plugins>
-    <target-component>org.exoplatform.services.jcr.RepositoryService</target-component>
-    <component-plugin>
-      <name>add.namespaces</name>
-      <set-method>addPlugin</set-method>
-      <type>org.exoplatform.services.jcr.impl.AddNamespacesPlugin</type>
-      <init-params>
-        <properties-param>
-          <name>namespaces</name>
-          <property name="todo" value="http://org.exoplatform/example/todo/1.0"/>
-        </properties-param>
-      </init-params>
-    </component-plugin>
-    <component-plugin>
-      <name>add.nodeType</name>
-      <set-method>addPlugin</set-method>
-      <type>org.exoplatform.services.jcr.impl.AddNodeTypePlugin</type>
-      <init-params>
-        <values-param>
-          <name>autoCreatedInNewRepository</name>
-          <description>Node types configuration file</description>
-          <value>jar:/conf/todo-nodetypes-config.xml</value>
-        </values-param>
-      </init-params>
-    </component-plugin>
-  </external-component-plugins>
 </configuration>

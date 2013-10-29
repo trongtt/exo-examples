@@ -1,42 +1,81 @@
-/*
- * Copyright (C) 2012 eXo Platform SAS.
- *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
- *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
- */
 package org.gatein.portlet.todomvc.service.testimpl;
 
+import java.net.URL;
+
+import javax.jcr.Credentials;
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.Repository;
+import javax.jcr.Session;
+import org.exoplatform.container.StandaloneContainer;
+import org.exoplatform.services.jcr.RepositoryService;
+import org.exoplatform.services.jcr.core.CredentialsImpl;
 import org.gatein.portlet.todomvc.service.TodoService;
-import org.gatein.portlet.todomvc.service.impl.TodoServiceImpl;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class TodoServiceImplTest {
+/**
+ * Unit test for simple App.
+ */
+public class TodoServiceJCRImplTest {
     private TodoService todoService;
+
+    @BeforeClass
+    public static void beforeClass() throws Exception {
+        String conf = "/conf/standalone/configuration.xml";
+        URL confURL = TodoServiceJCRImplTest.class.getResource(conf);
+
+        if (confURL != null) {
+            StandaloneContainer.addConfigurationURL(confURL.toString());
+        } else {
+            StandaloneContainer.addConfigurationPath(conf);
+        }
+
+        StandaloneContainer container = StandaloneContainer.getInstance();
+        Assert.assertNotNull(container);
+    }
+
+    @AfterClass
+    public static void afterClass() throws Exception {
+
+    }
 
     @Before
     public void before() throws Exception {
-        todoService = new TodoServiceImpl();
+        StandaloneContainer container = StandaloneContainer.getInstance();
+
+        //Login to JCR and reset all data
+        RepositoryService repositoryServices = (RepositoryService) container.getComponentInstanceOfType(RepositoryService.class);
+        Assert.assertNotNull(repositoryServices);
+        Repository repository = repositoryServices.getDefaultRepository();
+        Assert.assertNotNull(repository);
+        Credentials credentials = new CredentialsImpl("__system", "admin".toCharArray());
+        Session session = repository.login(credentials, "ws");
+        Node root = session.getRootNode();
+        NodeIterator iterator = root.getNodes();
+        while (iterator.hasNext()) {
+            Node node = iterator.nextNode();
+            if (node.isNodeType("todo:todolist")) {
+                node.remove();
+            }
+        }
+        root.save();
+        session.save();
+
+        //Init service
+        todoService = (TodoService) container.getComponentInstanceOfType(TodoService.class);
+        Assert.assertNotNull(todoService);
     }
 
     @After
     public void after() throws Exception {
+
     }
 
     @Test
