@@ -1,0 +1,29 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+   <groupId>trongtt.examples</groupId>
+   <artifactId>kernel-in-use</artifactId>
+   <packaging>jar</packaging>
+   <version>1.0-SNAPSHOT</version>
+   <name>Chromattic Examples</name>
+   <url>http://maven.apache.org</url>
+
+   <properties>
+      <org.exoplatform.kernel.version>2.5.0-GA</org.exoplatform.kernel.version>
+      <junit.version>3.8.1</junit.version>
+   </properties>
+
+   <dependencies>
+      <dependency>
+         <groupId>junit</groupId>
+         <artifactId>junit</artifactId>
+         <version>${junit.version}</version>
+         <scope>test</scope>
+      </dependency>
+
+      <dependency>
+         <groupId>org.exoplatform.kernel</groupId>
+         <artifactId>exo.kernel.component.cache</artifactId>
+         <version>${org.exoplatform.kernel.version}</version>
+      </dependency>
+   </dependencies>
+</project>
