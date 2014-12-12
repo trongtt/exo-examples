@@ -12,7 +12,8 @@
 		<input type="text" id="msg_<portlet:namespace/>" value="Hello World"/> <a href="#" onclick="send_<portlet:namespace/>();">send</a>
 		
 	</p>
-	
+
+  <div id="display_msg_<portlet:namespace/>"></div>
 </div>
 
 <script type="text/javascript">
@@ -29,23 +30,26 @@
 	
 	function init_<portlet:namespace/>()
 	{
-  	if (!eXo.core.Cometd.isConnected()) {
-    	eXo.core.Cometd.url = '/cometd-ksdemo/cometd' ;	
-    	eXo.core.Cometd.exoId = '<%=request.getAttribute("userName")%>';
-    	eXo.core.Cometd.exoToken = '<%=request.getAttribute("userToken")%>';
-    	eXo.core.Cometd.addOnConnectionReadyCallback(subcribeNotification_<portlet:namespace/>);
-    	eXo.core.Cometd.init();
-  	} else {
-  	  subcribeNotification_<portlet:namespace/>();
-  	}
+	  require(["SHARED/commons-cometd"],function(cometd) {
+    	if (!cometd.isConnected()) {
+      	cometd.url = '/cometd/cometd' ;	
+      	cometd.exoId = '<%=request.getAttribute("userName")%>';
+      	cometd.exoToken = '<%=request.getAttribute("userToken")%>';
+      	cometd.addOnConnectionReadyCallback(subcribeNotification_<portlet:namespace/>);
+      	cometd.init();
+    	} else {
+    	  subcribeNotification_<portlet:namespace/>();
+    	}
+	  });
 	}
 	
 	function subcribeNotification_<portlet:namespace/>()
 	{
-		eXo.core.Cometd.subscribe('/eXo/portal/notification', function(eventObj) {
-		  var data = eXo.core.JSON.parse(eventObj.data);
-		  eXo.core.Notification.addMessage(data.message);
-		});
+	  require(["SHARED/commons-cometd"],function(cometd) {
+  		cometd.subscribe('/eXo/portal/notification', function(eventObj) {
+  		  document.getElementById('display_msg_<portlet:namespace/>').innerHTML = document.getElementById('display_msg_<portlet:namespace/>').innerHTML + "<br/>" + eventObj.data;
+  		});
+	  });
 	}
 
 </script>

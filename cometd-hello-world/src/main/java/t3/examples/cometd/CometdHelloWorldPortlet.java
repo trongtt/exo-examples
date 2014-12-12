@@ -37,32 +37,50 @@ import javax.portlet.RenderResponse;
 
 public class CometdHelloWorldPortlet extends GenericPortlet
 {
+   // Kick off a thread which sending an message for every 15 seconds
+   // This thread will be destroyed when 5 messages are sent.
    public void processAction(ActionRequest actionRequest, ActionResponse actionResponse) throws PortletException,
       IOException
    {
 
-      String message = actionRequest.getParameter("message");
+      final String message = actionRequest.getParameter("message");
 
-      ContinuationService continuation = getContinuationService();
+      final ContinuationService continuation = getContinuationService();
       if (continuation == null)
          return;
 
-      Map<String, String> msg = new HashMap<String, String>();
+      final Map<String, String> msg = new HashMap<String, String>();
       msg.put("subcribe", "/eXo/portal/notification");
       msg.put("sender", "Cometd Hello World Portlet");
-      msg.put("message", message);
 
-      String userName = actionRequest.getRemoteUser();
+      final String userName = actionRequest.getRemoteUser();
       System.out.println("DEBUG: Sending message \"" + message + "\"");
-      JsonGeneratorImpl jsonGenerator = new JsonGeneratorImpl();
-      try
-      {
-         continuation.sendMessage(userName, "/eXo/portal/notification", jsonGenerator.createJsonObjectFromMap(msg), msg.toString());
-      }
-      catch (JsonException e)
-      {
-         e.printStackTrace();
-      }
+      final JsonGeneratorImpl jsonGenerator = new JsonGeneratorImpl();
+      Thread t = new Thread() {
+          @Override
+        public void run() {
+            int i = 0;
+            while (++i < 6) {
+                try
+                {
+                    msg.put("message", message + " [" + System.currentTimeMillis() + "]");
+                    continuation.sendMessage(userName, "/eXo/portal/notification", jsonGenerator.createJsonObjectFromMap(msg), msg.toString());
+                }
+                catch (JsonException e)
+                {
+                    e.printStackTrace();
+                }
+                try {
+                    sleep(1500);
+                } catch (InterruptedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+        }
+      };
+      t.start();
+
    }
 
    protected void doView(RenderRequest renderRequest, RenderResponse renderResponse) throws PortletException,
